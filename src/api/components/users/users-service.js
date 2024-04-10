@@ -107,10 +107,26 @@ async function deleteUser(id) {
   return true;
 }
 
+/**
+ * Check if email is already existed
+ * @param {string} email - Email
+ * @returns {boolean}
+ */
+
+async function emailExist(email) {
+  try {
+    const emailExist = await usersRepository.isEmailExist(email);
+    return emailExist;
+  } catch (err) {
+    throw err;
+  }
+}
+
 module.exports = {
   getUsers,
   getUser,
   createUser,
   updateUser,
   deleteUser,
+  emailExist,
 };

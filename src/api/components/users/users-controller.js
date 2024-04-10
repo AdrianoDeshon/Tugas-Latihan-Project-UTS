@@ -59,6 +59,14 @@ async function createUser(request, response, next) {
       );
     }
 
+    const emailExisted = await usersService.emailExist(email);
+    if (emailExisted) {
+      throw errorResponder(
+        errorTypes.EMAIL_ALREADY_TAKEN,
+        'Email already taken'
+      );
+    }
+
     return response.status(200).json({ name, email });
   } catch (error) {
     return next(error);
