@@ -52,14 +52,6 @@ async function createUser(request, response, next) {
     const password = request.body.password;
     const confirm_password = request.body.confirm_password;
 
-    const success = await usersService.createUser(name, email, password);
-    if (!success) {
-      throw errorResponder(
-        errorTypes.UNPROCESSABLE_ENTITY,
-        'Failed to create user'
-      );
-    }
-
     if (confirm_password !== password) {
       throw errorResponder(errorTypes.INVALID_PASSWORD, 'Password not match.');
     }
@@ -68,6 +60,14 @@ async function createUser(request, response, next) {
       throw errorResponder(
         errorTypes.EMAIL_ALREADY_TAKEN,
         'Email already taken'
+      );
+    }
+
+    const success = await usersService.createUser(name, email, password);
+    if (!success) {
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Failed to create user'
       );
     }
 
@@ -95,6 +95,14 @@ async function updateUser(request, response, next) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
         'Failed to update user'
+      );
+    }
+
+    const emailExisted = await usersService.emailExist(email);
+    if (emailExisted) {
+      throw errorResponder(
+        errorTypes.EMAIL_ALREADY_TAKEN,
+        'Email already taken'
       );
     }
 
