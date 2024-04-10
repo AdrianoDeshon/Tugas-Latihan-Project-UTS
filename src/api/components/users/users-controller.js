@@ -137,10 +137,42 @@ async function deleteUser(request, response, next) {
   }
 }
 
+/**
+ * Handle change password request
+ * @param {object} request - Express request object
+ * @param @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+async function changePassword(request, response, next) {
+  const id = request.params.id;
+  const { old_password, new_password, confirm_password } = request.body;
+
+  try {
+    const result = await usersService.changePassword(
+      id,
+      old_password,
+      new_password,
+      confirm_password
+    );
+    if (result) {
+      return response.status(200).json({ message: 'Password updated.' });
+    } else {
+      throw errorResponder(
+        errorTypes.INVALID_CREDENTIALS,
+        'Failed to update password'
+      );
+    }
+  } catch (error) {
+    return next(error);
+  }
+}
+
 module.exports = {
   getUsers,
   getUser,
   createUser,
   updateUser,
   deleteUser,
+  changePassword,
 };
